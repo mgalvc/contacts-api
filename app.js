@@ -25,5 +25,15 @@ app.post('/api', function(req, res) {
     db.addContact(res, req.body);
 });
 
+//update a contact
+app.put('/api/:id', function(req, res) {
+    db.updateContact(res, req.params.id, req.body);
+})
+
+//delete a contact
+app.delete('/api/:id', function(req, res) {
+    db.deleteContact(res, req.params.id);
+})
+
 app.listen(3000);
 console.log('App listening on 3000');

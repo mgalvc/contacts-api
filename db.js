@@ -21,7 +21,7 @@ let Contact = mongoose.model('Contact', contactSchema);
 module.exports.getAll = function(res) {
     let contacts;
     Contact.find(function(err, c) {
-        if(err) return console.error(err);
+        if (err) res.json(err);
         else res.status(200).json(c);
     });
 }
@@ -48,20 +48,26 @@ module.exports.addContact = function(res, contact) {
 }
 
 //PUT/id method
-module.exports.updateContact = function(id, new_values) {
+module.exports.updateContact = function(res, id, new_values) {
     let query = { _id : id };
-    Contact.update(query, { $set : new_values }, function(err, res) {
-        if (err) return console.error(err);
-
-        console.log(res);
+    Contact.update(query, { $set : new_values }, function(err, contact) {
+        if (err)
+            res.status(404).json({ error : 'There is no contact matching the id ' + id});
+        else if(contact.nModified === 0)
+            res.status(304).json({ response : 'No contact was updated'});
+        else
+            Contact.findById(id, function(err, c) {
+                res.status(200).json(c);
+            });
     });
 }
 
 //DELETE/id method
-module.exports.deleteContact = function(id) {
-    Contact.remove({ _id : id }, function(err, res) {
-        if (err) return console.error(err);
+module.exports.deleteContact = function(res, id) {
+    Contact.remove({ _id : id }, function(err) {
+        if (err)
+            res.status(404).json({ error : 'There is no contact matching the id ' + id});
 
-        console.log(res);
+        res.json({ response : 'Deleted id ' + id});
     })
 }
