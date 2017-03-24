@@ -1,6 +1,10 @@
 let db = require('./db');
 let express = require('express');
 let app = express();
+let bodyparser = require('body-parser');
+
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
 
 app.get('/', function(req, res) {
     res.send('Informations about contacts list');
@@ -9,6 +13,11 @@ app.get('/', function(req, res) {
 //get all docs
 app.get('/api', function(req, res) {
     db.getAll(res);
+});
+
+//add a contact
+app.post('/api', function(req, res) {
+    db.addContact(res, req.body);
 });
 
 app.listen(3000);

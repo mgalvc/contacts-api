@@ -35,13 +35,15 @@ module.exports.getOne = function(id) {
 }
 
 //POST method
-module.exports.addContact = function(contact) {
+module.exports.addContact = function(res, contact) {
     new Contact(contact).save(function(error) {
-        if(error)
+        if(error) {
+            let errorsRes = {};
             for(let err in error.errors)
-                console.error(error.errors[err].message);
-        else
-            console.log('a contact was saved!');
+                errorsRes[err] = error.errors[err].message;
+            res.status(400).send({ errors : errorsRes});
+        } else
+            res.status(201).send({created : contact});
     });
 }
 
