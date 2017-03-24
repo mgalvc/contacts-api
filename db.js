@@ -22,15 +22,15 @@ module.exports.getAll = function(res) {
     let contacts;
     Contact.find(function(err, c) {
         if(err) return console.error(err);
-        else res.send(c);
+        else res.status(200).json(c);
     });
 }
 
 //GET/id method
-module.exports.getOne = function(id) {
-    Contact.findById(id, function(err, res) {
-        if(err) return console.log(err);
-        console.log(res);
+module.exports.getOne = function(res, id) {
+    Contact.findById(id, function(err, c) {
+        if (err) res.status(404).json({error : 'There is no contact matching the id ' + id});
+        res.status(200).json(c);
     });
 }
 
@@ -41,9 +41,9 @@ module.exports.addContact = function(res, contact) {
             let errorsRes = {};
             for(let err in error.errors)
                 errorsRes[err] = error.errors[err].message;
-            res.status(400).send({ errors : errorsRes});
+            res.status(400).json({ errors : errorsRes});
         } else
-            res.status(201).send({created : contact});
+            res.status(201).json({created : contact});
     });
 }
 
